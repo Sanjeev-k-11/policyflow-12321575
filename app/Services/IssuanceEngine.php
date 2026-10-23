@@ -18,23 +18,16 @@ class IssuanceEngine
         protected MockInsurerService $mockInsurer
     ) {}
 
-    /**
-     * Start or safely resume policy issuance.
-     *
-     * Concurrency & Reliability Strategy:
-     * 1. Uses DB transaction and pessimistic row-level lock (lockForUpdate) on policy_requests.
-     * 2. Checks if policy is already ISSUED; if so, safely returns existing policy number without calling provider.
-     * 3. Prevents repeated provider calls simply because the HTTP request was retried.
-     * 4. Persists an immutable issuance attempt with a deterministic idempotency key.
-     */
+    
+
     public function submit(PolicyRequest $policy, ?string $scenarioOverride = null): array
     {
         return DB::transaction(function () use ($policy, $scenarioOverride) {
-            // Pessimistic lock prevents concurrent double-submission race conditions
-            /** @var PolicyRequest $lockedPolicy */
+            
+            
             $lockedPolicy = PolicyRequest::where('id', $policy->id)->lockForUpdate()->firstOrFail();
 
-            // Guard against duplicate execution if already issued
+            
             if ($lockedPolicy->isIssued()) {
                 return [
                     'success' => true,
@@ -47,7 +40,7 @@ class IssuanceEngine
                 ];
             }
 
-            // Ensure policy is in a valid state to submit
+            
             if ($lockedPolicy->status === PolicyRequest::STATUS_RECEIVED) {
                 $this->stateMachine->transition(
                     $lockedPolicy,
@@ -57,15 +50,15 @@ class IssuanceEngine
                 );
             }
 
-            // Next attempt number
+            
             $attemptNumber = $lockedPolicy->attempt_count + 1;
             $lockedPolicy->attempt_count = $attemptNumber;
             $lockedPolicy->save();
 
-            // Determine scenario
+            
             $effectiveScenario = $scenarioOverride ?: ($lockedPolicy->scenario ?: MockInsurerService::SCENARIO_SUCCESS);
 
-            // Deterministic Idempotency Key per attempt
+            
             $idempotencyKey = "IDEM-POL{$lockedPolicy->id}-ATTEMPT-{$attemptNumber}-" . Str::random(6);
 
             $requestPayload = [
@@ -83,7 +76,7 @@ class IssuanceEngine
                 'scenario' => $effectiveScenario,
             ];
 
-            // Record pending attempt
+            
             $startTime = microtime(true);
             $attempt = IssuanceAttempt::create([
                 'policy_request_id' => $lockedPolicy->id,
@@ -94,7 +87,7 @@ class IssuanceEngine
                 'status' => IssuanceAttempt::STATUS_PENDING,
             ]);
 
-            // Transition status to SUBMITTED
+            
             if ($lockedPolicy->status !== PolicyRequest::STATUS_SUBMITTED) {
                 $this->stateMachine->transition(
                     $lockedPolicy,
@@ -104,11 +97,11 @@ class IssuanceEngine
                 );
             }
 
-            // Call external/mock insurer
+            
             $insurerResponse = $this->mockInsurer->issue($requestPayload, $effectiveScenario);
             $durationMs = (int) round((microtime(true) - $startTime) * 1000);
 
-            // Case B: Timeout After Issue Simulation
+            
             if (!empty($insurerResponse['simulated_timeout'])) {
                 $attempt->update([
                     'status' => IssuanceAttempt::STATUS_TIMEOUT,
@@ -122,7 +115,7 @@ class IssuanceEngine
                 $lockedPolicy->failure_reason = 'Upstream timeout: policy outcome uncertain. Status reconciliation required.';
                 $lockedPolicy->save();
 
-                // Move to NEEDS_RECONCILIATION so operator or automated job can reconcile via status query
+                
                 $this->stateMachine->transition(
                     $lockedPolicy,
                     PolicyRequest::STATUS_NEEDS_RECONCILIATION,
@@ -142,7 +135,7 @@ class IssuanceEngine
                 ];
             }
 
-            // Case A / Happy path: SUCCESS -> ISSUED
+            
             if (!empty($insurerResponse['success']) && ($insurerResponse['status'] ?? '') === 'ISSUED') {
                 $attempt->update([
                     'status' => IssuanceAttempt::STATUS_SUCCESS,
@@ -175,7 +168,7 @@ class IssuanceEngine
                 ];
             }
 
-            // Case: DELAYED_CALLBACK -> PENDING_CONFIRMATION
+            
             if (!empty($insurerResponse['success']) && ($insurerResponse['status'] ?? '') === 'PENDING') {
                 $attempt->update([
                     'status' => IssuanceAttempt::STATUS_PENDING,
@@ -205,7 +198,7 @@ class IssuanceEngine
                 ];
             }
 
-            // Case: Temporary or permanent failure
+            
             $attempt->update([
                 'status' => IssuanceAttempt::STATUS_FAILED,
                 'response_payload' => $insurerResponse,
@@ -238,10 +231,8 @@ class IssuanceEngine
         });
     }
 
-    /**
-     * Reconcile status against mock provider.
-     * Solves the timeout-after-issue scenario safely: inspects upstream insurer datastore before any reissue.
-     */
+    
+
     public function reconcile(PolicyRequest $policy): array
     {
         $identifier = $policy->provider_reference ?: $policy->client_request_id;
@@ -252,7 +243,7 @@ class IssuanceEngine
             ];
         }
 
-        // Query upstream insurer status
+        
         $statusResult = $this->mockInsurer->getStatus($identifier);
 
         if (!$statusResult['found']) {
@@ -263,10 +254,10 @@ class IssuanceEngine
             ];
         }
 
-        // If provider confirms policy was issued upstream:
+        
         if ($statusResult['status'] === 'ISSUED') {
             return DB::transaction(function () use ($policy, $statusResult) {
-                /** @var PolicyRequest $lockedPolicy */
+                
                 $lockedPolicy = PolicyRequest::where('id', $policy->id)->lockForUpdate()->firstOrFail();
 
                 if ($lockedPolicy->isIssued()) {
@@ -310,14 +301,8 @@ class IssuanceEngine
         ];
     }
 
-    /**
-     * Process an incoming webhook callback from insurer.
-     *
-     * Reliability Case C: Duplicate callback idempotency
-     * 1. Uses DB unique constraint on provider_event_id.
-     * 2. If same event is delivered 2-3 times, the duplicate is detected and discarded without state alteration.
-     * 3. Terminal state defense: A delayed or repeated callback cannot overwrite or regress an ISSUED policy.
-     */
+    
+
     public function handleCallback(array $payload): array
     {
         $eventId = $payload['event_id'] ?? null;
@@ -333,7 +318,7 @@ class IssuanceEngine
             ];
         }
 
-        // 1. Check for existing event in database (Fast duplicate detection)
+        
         $existingEvent = ProviderEvent::where('provider_event_id', $eventId)->first();
         if ($existingEvent) {
             return [
@@ -344,10 +329,10 @@ class IssuanceEngine
             ];
         }
 
-        // 2. Atomic record creation + processing inside transaction
+        
         try {
             return DB::transaction(function () use ($eventId, $providerReference, $eventType, $policyNumber, $payload) {
-                // Database-level uniqueness ensures even simultaneous duplicate HTTP calls are caught
+                
                 $event = ProviderEvent::create([
                     'provider_event_id' => $eventId,
                     'provider_reference' => $providerReference,
@@ -357,8 +342,8 @@ class IssuanceEngine
                     'processed_at' => now(),
                 ]);
 
-                // Find policy request by provider_reference with pessimistic lock
-                /** @var PolicyRequest|null $policy */
+                
+                
                 $policy = PolicyRequest::where('provider_reference', $providerReference)->lockForUpdate()->first();
 
                 if (!$policy) {
@@ -374,7 +359,7 @@ class IssuanceEngine
                     ];
                 }
 
-                // Reliability Defense: If policy is ALREADY issued, protect terminal state!
+                
                 if ($policy->isIssued()) {
                     $event->update([
                         'status' => ProviderEvent::STATUS_IGNORED_DUPLICATE,
@@ -389,7 +374,7 @@ class IssuanceEngine
                     ];
                 }
 
-                // Process issuance confirmation
+                
                 if ($eventType === 'POLICY_ISSUED' && $policyNumber) {
                     $policy->policy_number = $policyNumber;
                     $policy->last_response = $payload;
@@ -413,7 +398,7 @@ class IssuanceEngine
                     ];
                 }
 
-                // Process failure callback
+                
                 if ($eventType === 'POLICY_FAILED') {
                     $reason = $payload['reason'] ?? 'Rejected during underwriting';
                     $policy->failure_reason = $reason;
@@ -443,7 +428,7 @@ class IssuanceEngine
                 ];
             });
         } catch (QueryException $e) {
-            // Handle race condition where another worker inserted the same provider_event_id simultaneously
+            
             if (str_contains($e->getMessage(), 'unique') || str_contains($e->getMessage(), '1062')) {
                 return [
                     'success' => true,

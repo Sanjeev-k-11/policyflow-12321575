@@ -8,23 +8,16 @@ use Illuminate\Console\Command;
 
 class ReconcileStalePoliciesCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    
+
     protected $signature = 'policy:reconcile-stale {--limit=50 : Maximum number of requests to reconcile}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    
+
     protected $description = 'Detects stale PENDING_CONFIRMATION or NEEDS_RECONCILIATION policy requests and reconciles with mock provider';
 
-    /**
-     * Execute the console command.
-     */
+    
+
     public function handle(IssuanceEngine $engine): int
     {
         $limit = (int) $this->option('limit');

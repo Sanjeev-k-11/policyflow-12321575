@@ -22,9 +22,8 @@ class MockInsurerService
         self::SCENARIO_DUPLICATE_CALLBACK,
     ];
 
-    /**
-     * Process an issuance request deterministically based on the chosen scenario.
-     */
+    
+
     public function issue(array $payload, ?string $scenarioOverride = null): array
     {
         $scenario = strtoupper($scenarioOverride ?: ($payload['scenario'] ?? self::SCENARIO_SUCCESS));
@@ -33,11 +32,11 @@ class MockInsurerService
         $customerName = $payload['customer_name'] ?? 'Sample Customer';
         $premium = $payload['calculated_premium'] ?? '100.00';
 
-        // Deterministic provider reference for this agent + request
+        
         $refHash = strtoupper(substr(md5($agentId . ':' . $clientRequestId), 0, 10));
         $providerReference = "REF-INS-{$refHash}";
 
-        // Check if insurer already created this policy
+        
         $existing = MockInsurerPolicy::where('provider_reference', $providerReference)->first();
         if ($existing) {
             return [
@@ -64,8 +63,8 @@ class MockInsurerService
                 ];
 
             case self::SCENARIO_TIMEOUT_AFTER_ISSUE:
-                // The critical edge case: Insurer successfully issues the policy in its system,
-                // BUT the network connection drops or times out before the client receives the response!
+                
+                
                 $policyNumber = 'POL-' . date('Y') . '-' . strtoupper(Str::random(8));
                 MockInsurerPolicy::create([
                     'provider_reference' => $providerReference,
@@ -78,7 +77,7 @@ class MockInsurerService
                     'metadata' => ['simulated_issue_time' => now()->toIso8601String()],
                 ]);
 
-                // Simulate client call timeout
+                
                 return [
                     'simulated_timeout' => true,
                     'success' => false,
@@ -89,7 +88,7 @@ class MockInsurerService
                 ];
 
             case self::SCENARIO_DELAYED_CALLBACK:
-                // Insurer returns pending acknowledgement; final confirmation will arrive via async webhook
+                
                 return [
                     'success' => true,
                     'status' => 'PENDING',
@@ -125,10 +124,8 @@ class MockInsurerService
         }
     }
 
-    /**
-     * Reconciliation / Status query endpoint simulation.
-     * Used by PolicyFlow to resolve timeouts safely before attempting any reissue.
-     */
+    
+
     public function getStatus(string $identifier): array
     {
         $policy = MockInsurerPolicy::where('provider_reference', $identifier)

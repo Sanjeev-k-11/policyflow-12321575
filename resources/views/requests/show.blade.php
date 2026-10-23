@@ -61,7 +61,7 @@
              }
          }">
 
-        <!-- Top Navigation & Action Header -->
+        
         <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <a href="{{ route('requests.index') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center space-x-1 mb-1">
@@ -80,7 +80,7 @@
                 </p>
             </div>
 
-            <!-- Lifecycle Action Buttons -->
+            
             <div class="flex flex-wrap items-center gap-2">
                 @if ($policy->canSubmit())
                     <button type="button" @click="submitIssuance()" :disabled="loading"
@@ -112,7 +112,7 @@
             </div>
         </div>
 
-        <!-- Failure or Reconciliation Banner -->
+        
         @if ($policy->status === 'NEEDS_RECONCILIATION')
             <div class="mb-6 p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/50 border border-orange-300/80 dark:border-orange-800/80 flex items-start space-x-3 text-xs text-orange-800 dark:text-orange-200 shadow-xs">
                 <span class="text-lg">⚠️</span>
@@ -135,9 +135,9 @@
         @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
-            <!-- Left Column: Core Snapshot & References (7 cols) -->
+            
             <div class="lg:col-span-7 space-y-6">
-                <!-- Immutable Pricing Snapshot Card -->
+                
                 <div class="glass-panel p-6">
                     <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/50 dark:border-slate-800/50">
                         <h2 class="text-base font-bold text-slate-900 dark:text-white">
@@ -174,7 +174,7 @@
                         </div>
                     </div>
 
-                    <!-- Final Calculated Premium -->
+                    
                     <div class="p-4 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-sky-500/10 to-indigo-500/5 border border-indigo-200/50 dark:border-indigo-800/50 flex items-center justify-between">
                         <div>
                             <span class="text-xs text-slate-500 font-semibold">Accepted Premium Snapshot</span>
@@ -188,7 +188,7 @@
                     </div>
                 </div>
 
-                <!-- Provider References & Identity Card -->
+                
                 <div class="glass-panel p-6">
                     <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/50 dark:border-slate-800/50">
                         <h2 class="text-base font-bold text-slate-900 dark:text-white">
@@ -213,7 +213,7 @@
                         </div>
                     </div>
 
-                    <!-- Customer Trip Dates -->
+                    
                     <div class="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-800/50 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                         <div>
                             <span class="text-slate-400 block text-[10px] uppercase font-bold">Trip Dates</span>
@@ -236,7 +236,7 @@
                     </div>
                 </div>
 
-                <!-- Issuance Attempts Table -->
+                
                 <div class="glass-panel p-6">
                     <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/50 dark:border-slate-800/50">
                         <h2 class="text-base font-bold text-slate-900 dark:text-white">
@@ -285,7 +285,7 @@
                 </div>
             </div>
 
-            <!-- Right Column: Vertical Audit Timeline (5 cols) -->
+            
             <div class="lg:col-span-5 glass-panel p-6 sticky top-24">
                 <div class="flex items-center justify-between pb-3 mb-5 border-b border-slate-200/50 dark:border-slate-800/50">
                     <div class="flex items-center space-x-2">

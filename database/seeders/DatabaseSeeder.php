@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         $pricing = new PricingService();
 
         $candidates = [
-            // 1-8: ISSUED Policies
+            
             [
                 'client_request_id' => 'AGT-2026-0001',
                 'agent_id' => 'AGENT-17',
@@ -126,7 +126,7 @@ class DatabaseSeeder extends Seeder
                 'policy_num' => 'POL-2026-IN008',
             ],
 
-            // 9-12: PENDING_CONFIRMATION
+            
             [
                 'client_request_id' => 'AGT-2026-0009',
                 'agent_id' => 'AGENT-17',
@@ -176,7 +176,7 @@ class DatabaseSeeder extends Seeder
                 'status' => PolicyRequest::STATUS_PENDING_CONFIRMATION,
             ],
 
-            // 13-16: NEEDS_RECONCILIATION
+            
             [
                 'client_request_id' => 'AGT-2026-0013',
                 'agent_id' => 'AGENT-55',
@@ -217,7 +217,7 @@ class DatabaseSeeder extends Seeder
                 'scenario' => MockInsurerService::SCENARIO_TIMEOUT_AFTER_ISSUE,
             ],
 
-            // 17-20: FAILED (retriable or permanent)
+            
             [
                 'client_request_id' => 'AGT-2026-0016',
                 'agent_id' => 'AGENT-88',
@@ -260,7 +260,7 @@ class DatabaseSeeder extends Seeder
                 'scenario' => MockInsurerService::SCENARIO_TEMPORARY_FAILURE,
             ],
 
-            // 21-22: SUBMITTED (in-flight)
+            
             [
                 'client_request_id' => 'AGT-2026-0019',
                 'agent_id' => 'AGENT-07',
@@ -286,7 +286,7 @@ class DatabaseSeeder extends Seeder
                 'status' => PolicyRequest::STATUS_SUBMITTED,
             ],
 
-            // 23-24: VALIDATED
+            
             [
                 'client_request_id' => 'AGT-2026-0021',
                 'agent_id' => 'AGENT-14',
@@ -312,7 +312,7 @@ class DatabaseSeeder extends Seeder
                 'status' => PolicyRequest::STATUS_VALIDATED,
             ],
 
-            // 25-26: RECEIVED
+            
             [
                 'client_request_id' => 'AGT-2026-0023',
                 'agent_id' => 'AGENT-99',
@@ -388,7 +388,7 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now()->subHours(rand(2, 72)),
             ]);
 
-            // If ISSUED or TIMEOUT_AFTER_ISSUE, populate upstream insurer record
+            
             if ($item['status'] === PolicyRequest::STATUS_ISSUED) {
                 MockInsurerPolicy::firstOrCreate(
                     ['provider_reference' => $providerRef],
@@ -402,7 +402,7 @@ class DatabaseSeeder extends Seeder
                     ]
                 );
             } elseif ($item['status'] === PolicyRequest::STATUS_NEEDS_RECONCILIATION) {
-                // Simulate upstream insurer has issued policy, but local PolicyFlow timed out
+                
                 MockInsurerPolicy::firstOrCreate(
                     ['provider_reference' => $providerRef],
                     [
@@ -415,7 +415,7 @@ class DatabaseSeeder extends Seeder
                     ]
                 );
             } elseif ($item['status'] === PolicyRequest::STATUS_PENDING_CONFIRMATION) {
-                // Upstream insurer completed underwriting; ready for reconciliation
+                
                 MockInsurerPolicy::firstOrCreate(
                     ['provider_reference' => $providerRef],
                     [
@@ -429,7 +429,7 @@ class DatabaseSeeder extends Seeder
                 );
             }
 
-            // Record initial state history: INTAKE -> RECEIVED
+            
             PolicyStateHistory::create([
                 'policy_request_id' => $policy->id,
                 'from_status' => null,
@@ -439,7 +439,7 @@ class DatabaseSeeder extends Seeder
                 'created_at' => $policy->created_at,
             ]);
 
-            // Add lifecycle transitions
+            
             if ($item['status'] !== PolicyRequest::STATUS_RECEIVED) {
                 PolicyStateHistory::create([
                     'policy_request_id' => $policy->id,
@@ -467,7 +467,7 @@ class DatabaseSeeder extends Seeder
                     'created_at' => $policy->created_at->addSeconds(2),
                 ]);
 
-                // Create attempt record
+                
                 IssuanceAttempt::create([
                     'policy_request_id' => $policy->id,
                     'attempt_number' => 1,

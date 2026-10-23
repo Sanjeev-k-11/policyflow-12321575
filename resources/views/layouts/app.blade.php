@@ -15,7 +15,6 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script>
-        // Check dark mode preference
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -46,23 +45,23 @@
       }"
       @toast.window="showToast($event.detail.message, $event.detail.type)">
 
-    <!-- Background mesh gradient with floating color blobs -->
+    
     <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <!-- Grid pattern overlay -->
+        
         <div class="absolute inset-0 bg-grid-pattern opacity-60"></div>
 
-        <!-- Floating ambient light blobs -->
+        
         <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-500/15 blur-3xl animate-blob-float"></div>
         <div class="absolute top-1/4 -right-32 w-[32rem] h-[32rem] rounded-full bg-sky-400/15 blur-3xl animate-blob-float-slow"></div>
         <div class="absolute bottom-10 left-1/3 w-80 h-80 rounded-full bg-emerald-400/12 blur-3xl animate-blob-float"></div>
         <div class="absolute -bottom-20 right-10 w-96 h-96 rounded-full bg-peach-300/12 blur-3xl animate-blob-float-slow"></div>
     </div>
 
-    <!-- Header / Navigation Bar -->
+    
     <header class="sticky top-0 z-40 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-white/80 dark:border-slate-800/80 shadow-sm">
         <div class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10">
             <div class="flex items-center justify-between h-16">
-                <!-- Brand logo & tag -->
+                
                 <div class="flex items-center space-x-8">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
                         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
@@ -80,7 +79,7 @@
                         </div>
                     </a>
 
-                    <!-- Navigation Links -->
+                    
                     <nav class="hidden md:flex space-x-1">
                         <a href="{{ route('dashboard') }}" class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors {{ request()->routeIs('dashboard') ? 'bg-indigo-50/80 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/60' }}">
                             Dashboard
@@ -97,15 +96,15 @@
                     </nav>
                 </div>
 
-                <!-- Right Header Actions -->
+                
                 <div class="flex items-center space-x-3">
-                    <!-- Engine Status Pill -->
+                    
                     <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/70 dark:border-emerald-800/70 text-xs font-semibold text-emerald-700 dark:text-emerald-400 shadow-xs">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>Engine Active</span>
                     </div>
 
-                    <!-- Dark Mode Toggle Button -->
+                    
                     <button @click="toggleDarkMode()" type="button" aria-label="Toggle Dark Mode" class="p-2.5 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/70 dark:border-slate-700/70 transition-all shadow-xs">
                         <svg x-show="!darkMode" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
@@ -115,7 +114,7 @@
                         </svg>
                     </button>
 
-                    <!-- Quick Intake CTA -->
+                    
                     <a href="{{ route('requests.create') }}" class="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-500 hover:to-sky-400 shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/35 transition-all duration-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -127,12 +126,12 @@
         </div>
     </header>
 
-    <!-- Main Content Area -->
+    
     <main class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 py-8">
         {{ $slot }}
     </main>
 
-    <!-- Floating Global Toast -->
+    
     <div x-cloak x-show="toast.show" 
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-3"
@@ -157,7 +156,7 @@
         </button>
     </div>
 
-    <!-- Footer -->
+    
     <footer class="mt-16 border-t border-slate-200/60 dark:border-slate-800/60 py-8 text-center text-xs text-slate-500 dark:text-slate-400">
         <p>PolicyFlow • Fault-Tolerant Travel Insurance Issuance & Reconciliation Engine</p>
         <p class="mt-1 font-mono text-[11px] text-slate-400">Built for high-reliability idempotency, concurrency row-locking & zero-duplicate guarantees.</p>

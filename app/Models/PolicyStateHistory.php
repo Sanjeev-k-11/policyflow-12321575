@@ -10,7 +10,7 @@ class PolicyStateHistory extends Model
 {
     use HasFactory;
 
-    public $timestamps = false; // Only uses created_at timestamp
+    public $timestamps = false; 
     protected $table = 'policy_state_history';
 
     protected $guarded = ['id'];

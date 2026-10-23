@@ -4,12 +4,6 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\PolicyRequestViewController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| PolicyFlow Web Application Routes
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::prefix('requests')->group(function () {

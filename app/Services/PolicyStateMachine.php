@@ -9,11 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class PolicyStateMachine
 {
-    /**
-     * Explicit Transition Graph.
-     * Maps each status to the array of strictly permitted destination statuses.
-     * Any transition not listed is rejected as an invalid state transition/regression.
-     */
+    
+
     private const ALLOWED_TRANSITIONS = [
         PolicyRequest::STATUS_RECEIVED => [
             PolicyRequest::STATUS_VALIDATED,
@@ -40,16 +37,15 @@ class PolicyStateMachine
             PolicyRequest::STATUS_FAILED,
         ],
         PolicyRequest::STATUS_FAILED => [
-            // Safe retry after temporary failure transitions back to SUBMITTED
+            
             PolicyRequest::STATUS_SUBMITTED,
         ],
-        // ISSUED is a terminal immutable state: NO transitions out of ISSUED are permitted!
+        
         PolicyRequest::STATUS_ISSUED => [],
     ];
 
-    /**
-     * Check if transition from $from to $to is valid according to the state machine graph.
-     */
+    
+
     public function canTransition(string $from, string $to): bool
     {
         if ($from === $to) {
@@ -60,11 +56,8 @@ class PolicyStateMachine
         return in_array($to, $allowed, true);
     }
 
-    /**
-     * Execute a state transition, ensuring atomic database persistence and audit trail logging.
-     *
-     * @throws InvalidStateTransitionException
-     */
+    
+
     public function transition(
         PolicyRequest $policy,
         string $toStatus,
@@ -74,7 +67,7 @@ class PolicyStateMachine
     ): PolicyRequest {
         $fromStatus = $policy->status;
 
-        // Terminal state protection: ISSUED policies can NEVER regress or transition
+        
         if ($fromStatus === PolicyRequest::STATUS_ISSUED) {
             throw new InvalidStateTransitionException(
                 $fromStatus,
@@ -83,7 +76,7 @@ class PolicyStateMachine
             );
         }
 
-        // Validate against state machine definition
+        
         if (!$this->canTransition($fromStatus, $toStatus)) {
             throw new InvalidStateTransitionException(
                 $fromStatus,
@@ -92,7 +85,7 @@ class PolicyStateMachine
             );
         }
 
-        // Atomic transition and audit history recording
+        
         return DB::transaction(function () use ($policy, $fromStatus, $toStatus, $trigger, $reason, $metadata) {
             $policy->status = $toStatus;
 
@@ -106,7 +99,7 @@ class PolicyStateMachine
 
             $policy->save();
 
-            // Record in audit log
+            
             PolicyStateHistory::create([
                 'policy_request_id' => $policy->id,
                 'from_status' => $fromStatus,

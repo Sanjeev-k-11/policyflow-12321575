@@ -10,7 +10,7 @@ class PolicyRequest extends Model
 {
     use HasFactory;
 
-    // Supported lifecycle states
+    
     public const STATUS_RECEIVED = 'RECEIVED';
     public const STATUS_VALIDATED = 'VALIDATED';
     public const STATUS_SUBMITTED = 'SUBMITTED';

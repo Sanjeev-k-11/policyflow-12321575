@@ -5,7 +5,7 @@
 <div class="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
     @forelse ($items as $entry)
         <div class="relative group">
-            <!-- Glowing status dot -->
+            
             <div class="absolute -left-[1.45rem] top-1 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-900 shadow-sm transition-transform group-hover:scale-125
                 @if($entry->to_status === 'ISSUED') bg-emerald-500 shadow-emerald-500/50
                 @elseif($entry->to_status === 'FAILED') bg-rose-500 shadow-rose-500/50

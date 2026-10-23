@@ -7,7 +7,6 @@
         searchQuery: '',
         statusFilter: 'ALL',
 
-        // 1-Click live auto reconciliation of all stale policies
         autoReconcileAll() {
             this.isReconciling = true;
             fetch('/api/policy-requests/reconcile-all', {
@@ -33,7 +32,6 @@
             });
         },
 
-        // Fast sample intake creation from dashboard
         quickIntake() {
             const clientReqId = 'QUICK-' + Math.floor(1000 + Math.random() * 9000);
             fetch('/api/policy-requests', {
@@ -64,7 +62,7 @@
         }
     }">
 
-        <!-- Top Header & Fast Action Toolbar -->
+        
         <div class="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
                 <div class="flex items-center space-x-2">
@@ -80,7 +78,7 @@
                 </p>
             </div>
 
-            <!-- Dashboard Action Toolbar (No awkward wrapping) -->
+            
             <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0">
                 <button type="button" @click="quickIntake()"
                         class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-all shadow-2xs flex items-center space-x-1.5">
@@ -121,7 +119,7 @@
             </div>
         </div>
 
-        <!-- Reliability & Engine System Health Bar -->
+        
         <div class="glass-panel p-4 mb-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs divide-y sm:divide-y-0 sm:divide-x divide-slate-200/60 dark:divide-slate-800/60">
                 <div class="flex items-center space-x-3 px-3">
@@ -166,7 +164,7 @@
             </div>
         </div>
 
-        <!-- Bento Grid Section 1: Hero Metric Cards -->
+        
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 mb-8">
             <x-stat label="Total Intake" :value="$totalRequests" icon="activity" color="indigo" subtext="All recorded requests" />
             <x-stat label="Issued Policies" :value="$issuedCount" icon="check-circle" color="emerald" subtext="Confirmed unique policies" />
@@ -176,9 +174,9 @@
             <x-stat label="Premium Written" :value="number_format($totalPremium, 2)" prefix="₹" icon="currency" color="emerald" subtext="Confirmed gross written" />
         </div>
 
-        <!-- Bento Grid Section 2: Visual Distribution & 7-Day Dynamic Activity Trend -->
+        
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            <!-- 1. Status Ring Donut (5 cols) -->
+            
             <div class="lg:col-span-5 glass-panel p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
@@ -189,7 +187,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row items-center justify-around py-4 gap-6">
-                        <!-- SVG Ring -->
+                        
                         <div class="relative w-44 h-44 flex items-center justify-center">
                             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="38" stroke-width="12" class="stroke-slate-200/60 dark:stroke-slate-800/60 fill-none"/>
@@ -228,7 +226,7 @@
                             </div>
                         </div>
 
-                        <!-- Legend -->
+                        
                         <div class="space-y-2 text-xs">
                             @foreach ($statusCounts as $st => $cnt)
                                 <div class="flex items-center space-x-2">
@@ -249,7 +247,7 @@
                 </div>
             </div>
 
-            <!-- 2. Dynamic 7-Day Ingestion & Issuance Trend Visual (7 cols) -->
+            
             <div class="lg:col-span-7 glass-panel p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
@@ -267,7 +265,7 @@
                         </div>
                     </div>
 
-                    <!-- Custom SVG Bar Chart -->
+                    
                     <div class="py-4">
                         <div class="grid grid-cols-7 gap-3 text-center items-end h-40 pt-4">
                             @foreach ($dailyTrend as $trend)
@@ -277,14 +275,14 @@
                                 @endphp
                                 <div class="flex flex-col items-center h-full justify-end group">
                                     <div class="w-full flex items-end justify-center space-x-1.5 h-28">
-                                        <!-- Intake Bar -->
+                                        
                                         <div class="w-3 rounded-t-lg bg-indigo-500/80 group-hover:bg-indigo-500 transition-all duration-300 relative"
                                              style="height: {{ $intakeHeight }}%;">
                                             <span class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-5 left-1/2 transform -translate-x-1/2 text-[10px] font-mono font-bold text-indigo-600 bg-white dark:bg-slate-900 px-1 rounded shadow-xs">
                                                 {{ $trend['intake'] }}
                                             </span>
                                         </div>
-                                        <!-- Issued Bar -->
+                                        
                                         <div class="w-3 rounded-t-lg bg-emerald-500/80 group-hover:bg-emerald-500 transition-all duration-300 relative"
                                              style="height: {{ $issuedHeight }}%;">
                                             <span class="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-5 left-1/2 transform -translate-x-1/2 text-[10px] font-mono font-bold text-emerald-600 bg-white dark:bg-slate-900 px-1 rounded shadow-xs">
@@ -307,9 +305,9 @@
             </div>
         </div>
 
-        <!-- Bento Grid Section 3: Plan Analytics & Geographic Breakdown -->
+        
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            <!-- Plan Analytics Breakdown (6 cols) -->
+            
             <div class="lg:col-span-6 glass-panel p-6">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                     <h2 class="text-base font-bold text-slate-900 dark:text-white">Plan Code Analytics</h2>
@@ -317,7 +315,7 @@
                 </div>
 
                 <div class="space-y-4">
-                    <!-- BASIC -->
+                    
                     @php
                         $basicCount = $planBreakdown['BASIC']->count ?? 0;
                         $basicRev = $planBreakdown['BASIC']->total_premium ?? 0;
@@ -333,7 +331,7 @@
                         </div>
                     </div>
 
-                    <!-- PLUS -->
+                    
                     @php
                         $plusCount = $planBreakdown['PLUS']->count ?? 0;
                         $plusRev = $planBreakdown['PLUS']->total_premium ?? 0;
@@ -349,7 +347,7 @@
                         </div>
                     </div>
 
-                    <!-- PREMIUM -->
+                    
                     @php
                         $premCount = $planBreakdown['PREMIUM']->count ?? 0;
                         $premRev = $planBreakdown['PREMIUM']->total_premium ?? 0;
@@ -367,7 +365,7 @@
                 </div>
             </div>
 
-            <!-- Geographic Destination Split (6 cols) -->
+            
             <div class="lg:col-span-6 glass-panel p-6">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                     <h2 class="text-base font-bold text-slate-900 dark:text-white">Geographic Destination Split</h2>
@@ -375,7 +373,7 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <!-- DOMESTIC -->
+                    
                     @php
                         $dom = $destinationBreakdown['DOMESTIC'] ?? null;
                     @endphp
@@ -395,7 +393,7 @@
                         </div>
                     </div>
 
-                    <!-- INTERNATIONAL -->
+                    
                     @php
                         $intl = $destinationBreakdown['INTERNATIONAL'] ?? null;
                     @endphp
@@ -418,9 +416,9 @@
             </div>
         </div>
 
-        <!-- Bento Grid Section 4: Top Performing Agents (5 cols) & Live Audit Feed (7 cols) -->
+        
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-            <!-- Top Performing Agents Card (5 cols) -->
+            
             <div class="lg:col-span-5 glass-panel p-6">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                     <h2 class="text-base font-bold text-slate-900 dark:text-white">Agent Distribution</h2>
@@ -452,7 +450,7 @@
                 </div>
             </div>
 
-            <!-- Live Audit Stream Card (7 cols) -->
+            
             <div class="lg:col-span-7 glass-panel p-6">
                 <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                     <div class="flex items-center space-x-2">
@@ -495,7 +493,7 @@
             </div>
         </div>
 
-        <!-- Bento Grid Section 5: Recent Policy Requests with Instant Client-Side Filter -->
+        
         <div class="glass-panel p-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5 pb-4 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div>

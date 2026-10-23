@@ -8,12 +8,10 @@
              isRunning: false,
              labOutput: null,
 
-             // Run test issuance scenario
              runScenario() {
                  this.isRunning = true;
                  this.labOutput = null;
 
-                 // First generate a quick unique intake request for this test
                  const clientReqId = 'LAB-' + Math.floor(1000 + Math.random() * 9000);
                  const payload = {
                      client_request_id: clientReqId,
@@ -40,7 +38,6 @@
                  .then(r => r.json())
                  .then(intakeRes => {
                      const policyId = intakeRes.data.id;
-                     // Now dispatch submit with chosen scenario
                      return fetch('/api/policy-requests/' + policyId + '/submit?scenario=' + this.selectedScenario, {
                          method: 'POST',
                          headers: {
@@ -70,7 +67,6 @@
                  });
              },
 
-             // Test duplicate callback delivery 3 times
              testDuplicateCallback() {
                  this.isRunning = true;
                  this.labOutput = null;
@@ -99,7 +95,7 @@
              }
          }">
 
-        <!-- Header -->
+        
         <div class="mb-8">
             <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center space-x-3">
                 <span>🧪 Mock Insurer Reliability Lab</span>
@@ -109,9 +105,9 @@
             </p>
         </div>
 
-        <!-- Scenario Selector Grid -->
+        
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-            <!-- 1. SUCCESS -->
+            
             <button type="button" @click="selectedScenario = 'SUCCESS'"
                     class="glass-panel p-4 text-left transition-all relative overflow-hidden"
                     :class="selectedScenario === 'SUCCESS' ? 'ring-2 ring-emerald-500 border-emerald-500 shadow-md' : 'opacity-80 hover:opacity-100'">
@@ -124,7 +120,7 @@
                 </p>
             </button>
 
-            <!-- 2. TIMEOUT_AFTER_ISSUE -->
+            
             <button type="button" @click="selectedScenario = 'TIMEOUT_AFTER_ISSUE'"
                     class="glass-panel p-4 text-left transition-all relative overflow-hidden"
                     :class="selectedScenario === 'TIMEOUT_AFTER_ISSUE' ? 'ring-2 ring-orange-500 border-orange-500 shadow-md' : 'opacity-80 hover:opacity-100'">
@@ -137,7 +133,7 @@
                 </p>
             </button>
 
-            <!-- 3. DUPLICATE_CALLBACK -->
+            
             <button type="button" @click="selectedScenario = 'DUPLICATE_CALLBACK'"
                     class="glass-panel p-4 text-left transition-all relative overflow-hidden"
                     :class="selectedScenario === 'DUPLICATE_CALLBACK' ? 'ring-2 ring-indigo-500 border-indigo-500 shadow-md' : 'opacity-80 hover:opacity-100'">
@@ -150,7 +146,7 @@
                 </p>
             </button>
 
-            <!-- 4. DELAYED_CALLBACK -->
+            
             <button type="button" @click="selectedScenario = 'DELAYED_CALLBACK'"
                     class="glass-panel p-4 text-left transition-all relative overflow-hidden"
                     :class="selectedScenario === 'DELAYED_CALLBACK' ? 'ring-2 ring-amber-500 border-amber-500 shadow-md' : 'opacity-80 hover:opacity-100'">
@@ -163,7 +159,7 @@
                 </p>
             </button>
 
-            <!-- 5. TEMPORARY_FAILURE -->
+            
             <button type="button" @click="selectedScenario = 'TEMPORARY_FAILURE'"
                     class="glass-panel p-4 text-left transition-all relative overflow-hidden"
                     :class="selectedScenario === 'TEMPORARY_FAILURE' ? 'ring-2 ring-rose-500 border-rose-500 shadow-md' : 'opacity-80 hover:opacity-100'">
@@ -177,9 +173,9 @@
             </button>
         </div>
 
-        <!-- Action Bench & Terminal Output -->
+        
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <!-- Controls Card (4 cols) -->
+            
             <div class="lg:col-span-4 glass-panel p-6 space-y-5">
                 <div class="pb-3 border-b border-slate-200/50 dark:border-slate-800/50">
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Selected Scenario</span>
@@ -212,7 +208,7 @@
                 </div>
             </div>
 
-            <!-- Terminal / Live Result Card (8 cols) -->
+            
             <div class="lg:col-span-8 glass-panel p-6">
                 <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/50 dark:border-slate-800/50">
                     <div class="flex items-center space-x-2">

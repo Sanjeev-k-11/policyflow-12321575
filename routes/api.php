@@ -6,13 +6,6 @@ use App\Services\PricingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| PolicyFlow REST API Routes
-|--------------------------------------------------------------------------
-*/
-
-// Mandatory Scope Endpoints
 Route::prefix('policy-requests')->group(function () {
     Route::post('/', [PolicyRequestController::class, 'store']);
     Route::get('/', [PolicyRequestController::class, 'index']);
@@ -22,7 +15,6 @@ Route::prefix('policy-requests')->group(function () {
     Route::post('/{id}/reconcile', [PolicyRequestController::class, 'reconcile']);
 });
 
-// Mock Insurer Simulation Endpoints
 Route::prefix('mock-insurer')->group(function () {
     Route::post('/issue', [MockInsurerController::class, 'issue']);
     Route::get('/status/{provider_reference}', [MockInsurerController::class, 'status']);
@@ -30,7 +22,6 @@ Route::prefix('mock-insurer')->group(function () {
     Route::post('/simulate-duplicate-callback', [MockInsurerController::class, 'simulateDuplicateCallback']);
 });
 
-// Dynamic Live Pricing Calculator Preview Endpoint (for frontend live form updates)
 Route::post('/pricing/preview', function (Request $request, PricingService $pricingService) {
     try {
         $validated = $request->validate([

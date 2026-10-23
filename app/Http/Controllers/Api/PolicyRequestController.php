@@ -20,22 +20,15 @@ class PolicyRequestController extends Controller
         protected IssuanceEngine $issuanceEngine
     ) {}
 
-    /**
-     * Intake endpoint: Create a new policy request or safely return existing record.
-     *
-     * Concurrency & Reliability Case A: Duplicate intake prevention
-     * - UNIQUE(agent_id, client_request_id) enforced in database.
-     * - Returns 201 Created for a new request.
-     * - Returns 200 OK for repeated submissions without duplicating records.
-     * - Catches race conditions gracefully.
-     */
+    
+
     public function store(StorePolicyRequestRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $agentId = $validated['agent_id'];
         $clientRequestId = $validated['client_request_id'];
 
-        // 1. Check if record already exists (fast path)
+        
         $existing = PolicyRequest::where('agent_id', $agentId)
             ->where('client_request_id', $clientRequestId)
             ->first();
@@ -49,7 +42,7 @@ class PolicyRequestController extends Controller
             ], 200);
         }
 
-        // 2. Deterministic decimal-safe premium calculation
+        
         $destination = strtoupper($validated['destination']);
         $planCode = strtoupper($validated['plan_code']);
         $sumInsured = (int) $validated['sum_insured'];
@@ -63,7 +56,7 @@ class PolicyRequestController extends Controller
             tripEnd: $validated['trip_end']
         );
 
-        // 3. Atomic creation with race-condition catching
+        
         try {
             $policy = DB::transaction(function () use ($validated, $destination, $planCode, $sumInsured, $pricing) {
                 $policy = PolicyRequest::create([
@@ -77,7 +70,7 @@ class PolicyRequestController extends Controller
                     'plan_code' => $planCode,
                     'sum_insured' => $sumInsured,
 
-                    // Pricing snapshot: immutable breakdown
+                    
                     'travel_days' => $pricing['travel_days'],
                     'age_at_trip_start' => $pricing['age_at_trip_start'],
                     'base_daily_rate' => $pricing['base_daily_rate'],
@@ -90,7 +83,7 @@ class PolicyRequestController extends Controller
                     'scenario' => $validated['scenario'] ?? null,
                 ]);
 
-                // Initial state audit entry
+                
                 PolicyStateHistory::create([
                     'policy_request_id' => $policy->id,
                     'from_status' => null,
@@ -115,8 +108,8 @@ class PolicyRequestController extends Controller
             ], 201);
 
         } catch (QueryException $e) {
-            // Concurrent race condition handler: two simultaneous requests bypassed the first check
-            // and hit the database unique index. Catch the collision and return the winning record as 200 OK!
+            
+            
             if (str_contains($e->getMessage(), 'unique') || str_contains($e->getMessage(), '1062')) {
                 $existing = PolicyRequest::where('agent_id', $agentId)
                     ->where('client_request_id', $clientRequestId)
@@ -134,9 +127,8 @@ class PolicyRequestController extends Controller
         }
     }
 
-    /**
-     * Retrieve status, premium, references, and complete audit trail.
-     */
+    
+
     public function show(string $id): JsonResponse
     {
         $policy = PolicyRequest::where('id', $id)
@@ -157,10 +149,8 @@ class PolicyRequestController extends Controller
         ], 200);
     }
 
-    /**
-     * Start or safely resume issuance.
-     * Repeating this HTTP call will NOT produce duplicate policies or duplicate provider calls.
-     */
+    
+
     public function submit(Request $request, string $id): JsonResponse
     {
         $policy = PolicyRequest::where('id', $id)
@@ -189,9 +179,8 @@ class PolicyRequestController extends Controller
         ], $statusCode);
     }
 
-    /**
-     * Reconcile pending or timed-out request against mock insurer.
-     */
+    
+
     public function reconcile(Request $request, string $id): JsonResponse
     {
         $policy = PolicyRequest::where('id', $id)
@@ -215,9 +204,8 @@ class PolicyRequestController extends Controller
         ], 200);
     }
 
-    /**
-     * Reconcile all stale pending or timed out policies in batch.
-     */
+    
+
     public function reconcileAllStale(): JsonResponse
     {
         $stalePolicies = PolicyRequest::whereIn('status', [
@@ -267,9 +255,8 @@ class PolicyRequestController extends Controller
         ], 200);
     }
 
-    /**
-     * List requests with status filter and pagination.
-     */
+    
+
     public function index(Request $request): JsonResponse
     {
         $query = PolicyRequest::query()->orderBy('id', 'desc');
@@ -308,9 +295,8 @@ class PolicyRequestController extends Controller
         ], 200);
     }
 
-    /**
-     * Helper to format consistent policy response structure.
-     */
+    
+
     protected function formatPolicyResponse(PolicyRequest $policy, bool $includeAudit = false): array
     {
         $data = [

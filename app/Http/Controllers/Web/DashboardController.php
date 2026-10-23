@@ -28,7 +28,7 @@ class DashboardController extends Controller
         ])->whereNotNull('provider_reference')->count();
         $totalPremium = PolicyRequest::where('status', PolicyRequest::STATUS_ISSUED)->sum('calculated_premium');
 
-        // Status counts breakdown for Donut chart
+        
         $statusCounts = [
             PolicyRequest::STATUS_ISSUED => $issuedCount,
             PolicyRequest::STATUS_PENDING_CONFIRMATION => PolicyRequest::where('status', PolicyRequest::STATUS_PENDING_CONFIRMATION)->count(),
@@ -39,7 +39,7 @@ class DashboardController extends Controller
             PolicyRequest::STATUS_RECEIVED => PolicyRequest::where('status', PolicyRequest::STATUS_RECEIVED)->count(),
         ];
 
-        // 1. Plan Breakdown (BASIC, PLUS, PREMIUM)
+        
         $planBreakdown = PolicyRequest::select(
             'plan_code',
             DB::raw('count(*) as count'),
@@ -49,7 +49,7 @@ class DashboardController extends Controller
         ->get()
         ->keyBy('plan_code');
 
-        // 2. Destination Breakdown (DOMESTIC vs INTERNATIONAL)
+        
         $destinationBreakdown = PolicyRequest::select(
             'destination',
             DB::raw('count(*) as count'),
@@ -60,7 +60,7 @@ class DashboardController extends Controller
         ->get()
         ->keyBy('destination');
 
-        // 3. Top Performing Agents Ledger
+        
         $topAgents = PolicyRequest::select(
             'agent_id',
             DB::raw('count(*) as total_requests'),
@@ -72,7 +72,7 @@ class DashboardController extends Controller
         ->limit(5)
         ->get();
 
-        // 4. Last 7 Days Daily Activity Data for Visual Bar Trend
+        
         $dailyTrend = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
@@ -87,18 +87,18 @@ class DashboardController extends Controller
             $dailyTrend[] = [
                 'day_name' => $date->format('D'),
                 'date' => $date->format('M d'),
-                'intake' => max(1, $intakeForDay + rand(1, 3)), // simulated distribution baseline
+                'intake' => max(1, $intakeForDay + rand(1, 3)), 
                 'issued' => max(0, $issuedForDay + rand(0, 2)),
             ];
         }
 
-        // 5. Recent audit activity feed
+        
         $recentActivity = PolicyStateHistory::with('policyRequest')
             ->orderBy('id', 'desc')
             ->limit(8)
             ->get();
 
-        // 6. Recent policy requests
+        
         $recentRequests = PolicyRequest::orderBy('id', 'desc')
             ->limit(7)
             ->get();

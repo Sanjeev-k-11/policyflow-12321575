@@ -25,13 +25,8 @@ class PricingService
         500000 => '1.50',
     ];
 
-    /**
-     * Calculate insurance premium using deterministic, decimal-safe BCMath arithmetic.
-     * Formula:
-     * premium = base_daily_rate × travel_days × age_multiplier × destination_multiplier × coverage_multiplier
-     *
-     * @throws InvalidArgumentException
-     */
+    
+
     public function calculate(
         string $planCode,
         int $sumInsured,
@@ -65,13 +60,13 @@ class PricingService
             throw new InvalidArgumentException("Trip end date [{$end->toDateString()}] must be greater than or equal to trip start date [{$start->toDateString()}]");
         }
 
-        // Days calculation: inclusive (trip_end - trip_start + 1), minimum 1
+        
         $travelDays = (int) $start->diffInDays($end) + 1;
         if ($travelDays < 1) {
             $travelDays = 1;
         }
 
-        // Age calculation on trip start date
+        
         $ageAtTripStart = (int) $dob->diffInYears($start);
         if ($ageAtTripStart < 0) {
             throw new InvalidArgumentException("Date of birth cannot be after trip start date");
@@ -79,20 +74,20 @@ class PricingService
 
         $ageMultiplier = $this->determineAgeMultiplier($ageAtTripStart);
 
-        // Decimal-safe BCMath arithmetic with 4 decimal places of internal precision
-        // step 1: base_daily_rate * travel_days
+        
+        
         $totalDaily = bcmul($baseDailyRate, (string) $travelDays, 4);
 
-        // step 2: totalDaily * age_multiplier
+        
         $afterAge = bcmul($totalDaily, $ageMultiplier, 4);
 
-        // step 3: afterAge * destination_multiplier
+        
         $afterDestination = bcmul($afterAge, $destinationMultiplier, 4);
 
-        // step 4: afterDestination * coverage_multiplier
+        
         $finalRaw = bcmul($afterDestination, $coverageMultiplier, 4);
 
-        // Half-up rounding to 2 decimal places using decimal-safe logic
+        
         $roundedPremium = $this->bcRound($finalRaw, 2);
 
         return [
@@ -109,13 +104,8 @@ class PricingService
         ];
     }
 
-    /**
-     * Age multiplier rules:
-     * 0–17: 1.10
-     * 18–60: 1.00
-     * 61–70: 1.50
-     * 71+: 2.00
-     */
+    
+
     public function determineAgeMultiplier(int $age): string
     {
         if ($age <= 17) {
@@ -130,9 +120,8 @@ class PricingService
         return '2.00';
     }
 
-    /**
-     * Decimal-safe half-up rounding for arbitrary precision numbers.
-     */
+    
+
     public function bcRound(string $number, int $precision = 2): string
     {
         if (strpos($number, '.') === false) {
@@ -142,11 +131,11 @@ class PricingService
         $isNegative = str_starts_with($number, '-');
         $cleanNumber = ltrim($number, '-');
 
-        // Add 0.005 (for precision 2) to achieve standard half-up rounding
+        
         $addend = '0.' . str_repeat('0', $precision) . '5';
         $sum = bcadd($cleanNumber, $addend, $precision + 1);
 
-        // Truncate to precision
+        
         $dotPos = strpos($sum, '.');
         $result = substr($sum, 0, $dotPos + 1 + $precision);
 

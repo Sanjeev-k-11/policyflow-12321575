@@ -28,7 +28,6 @@
              submitting: false,
              calculating: false,
 
-             // Live recalculation on input change
              calculateLive() {
                  if (!this.form.plan_code || !this.form.sum_insured || !this.form.destination || !this.form.date_of_birth || !this.form.trip_start || !this.form.trip_end) {
                      return;
@@ -58,7 +57,6 @@
                  .catch(() => { this.calculating = false; });
              },
 
-             // Submit request to intake endpoint
              submitForm() {
                  this.submitting = true;
                  this.errors = {};
@@ -97,7 +95,7 @@
          }"
          x-init="calculateLive()">
 
-        <!-- Breadcrumb / Title -->
+        
         <div class="mb-6 flex items-center justify-between">
             <div>
                 <a href="{{ route('requests.index') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center space-x-1 mb-1">
@@ -111,7 +109,7 @@
                 </p>
             </div>
 
-            <!-- Fast Spec Preset Button -->
+            
             <button type="button" @click="
                 form.client_request_id = 'AGT-2026-0001';
                 form.agent_id = 'AGENT-17';
@@ -130,10 +128,10 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <!-- Left Form Area (7 cols) -->
+            
             <div class="lg:col-span-7 glass-panel p-6">
                 <form @submit.prevent="submitForm()" class="space-y-5">
-                    <!-- Client Request ID & Agent ID -->
+                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
@@ -158,7 +156,7 @@
                         </div>
                     </div>
 
-                    <!-- Customer Name & Date of Birth -->
+                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
@@ -183,7 +181,7 @@
                         </div>
                     </div>
 
-                    <!-- Destination & Plan Code -->
+                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
@@ -215,7 +213,7 @@
                         </div>
                     </div>
 
-                    <!-- Coverage Sum Insured -->
+                    
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
                             Coverage (Sum Insured) <span class="text-rose-500">*</span>
@@ -231,7 +229,7 @@
                         </template>
                     </div>
 
-                    <!-- Trip Start & Trip End -->
+                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
@@ -256,7 +254,7 @@
                         </div>
                     </div>
 
-                    <!-- Mock Insurer Scenario Flag (Dev Testing) -->
+                    
                     <div class="p-3.5 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/40 border border-indigo-200/50 dark:border-indigo-800/50">
                         <label class="block text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 mb-1">
                             🧪 Insurer Simulation Scenario
@@ -272,7 +270,7 @@
                         </p>
                     </div>
 
-                    <!-- Submit Button -->
+                    
                     <div class="pt-2">
                         <button type="submit" :disabled="submitting"
                                 class="w-full py-3 px-4 rounded-xl text-sm font-extrabold text-white bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-500 hover:to-sky-400 shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center space-x-2 disabled:opacity-50">
@@ -286,7 +284,7 @@
                 </form>
             </div>
 
-            <!-- Right Live Premium Preview Card (5 cols) -->
+            
             <div class="lg:col-span-5 glass-panel p-6 sticky top-24">
                 <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200/50 dark:border-slate-800/50">
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -297,7 +295,7 @@
                     </span>
                 </div>
 
-                <!-- Big Premium Callout -->
+                
                 <div class="p-5 rounded-2xl bg-gradient-to-tr from-indigo-600/10 via-sky-500/10 to-indigo-500/5 border border-indigo-200/60 dark:border-indigo-800/60 text-center mb-6">
                     <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Estimated Total Premium</span>
                     <div class="text-4xl font-black tracking-tight text-slate-900 dark:text-white font-mono mt-1">
@@ -308,7 +306,7 @@
                     </span>
                 </div>
 
-                <!-- Multiplier Breakdown Grid -->
+                
                 <div class="space-y-3 text-xs">
                     <div class="flex justify-between items-center py-1.5 border-b border-slate-200/40 dark:border-slate-800/40">
                         <span class="text-slate-500">Plan Base Daily Rate:</span>
@@ -336,7 +334,7 @@
                     </div>
                 </div>
 
-                <!-- Formula Representation -->
+                
                 <div class="mt-5 p-3 rounded-xl bg-slate-100/70 dark:bg-slate-900/70 text-[11px] font-mono text-slate-600 dark:text-slate-400 border border-slate-200/50 dark:border-slate-800/50 leading-relaxed">
                     <span class="font-bold text-indigo-600 dark:text-indigo-400">Formula:</span><br>
                     <span x-text="pricing.base_daily_rate"></span> × <span x-text="pricing.travel_days"></span> × <span x-text="pricing.age_multiplier"></span> × <span x-text="pricing.destination_multiplier"></span> × <span x-text="pricing.coverage_multiplier"></span> = ₹<span x-text="pricing.calculated_premium"></span>

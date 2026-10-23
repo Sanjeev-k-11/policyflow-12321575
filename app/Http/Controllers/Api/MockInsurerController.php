@@ -17,9 +17,8 @@ class MockInsurerController extends Controller
         protected IssuanceEngine $issuanceEngine
     ) {}
 
-    /**
-     * Simulated external insurer issuance endpoint.
-     */
+    
+
     public function issue(Request $request): JsonResponse
     {
         $payload = $request->validate([
@@ -43,22 +42,16 @@ class MockInsurerController extends Controller
         return response()->json($result, 200);
     }
 
-    /**
-     * Simulated status lookup endpoint for reconciliation.
-     * Expose GET /api/mock-insurer/status/{provider_reference}
-     */
+    
+
     public function status(string $provider_reference): JsonResponse
     {
         $status = $this->mockInsurer->getStatus($provider_reference);
         return response()->json($status, $status['found'] ? 200 : 404);
     }
 
-    /**
-     * Webhook callback receiver endpoint.
-     * Receives simulated provider events.
-     *
-     * POST /api/mock-insurer/callback
-     */
+    
+
     public function callback(Request $request): JsonResponse
     {
         $payload = $request->validate([
@@ -74,10 +67,8 @@ class MockInsurerController extends Controller
         return response()->json($result, 200);
     }
 
-    /**
-     * Development helper endpoint: Simulates sending an identical callback 3 times
-     * to demonstrate duplicate callback idempotency live in tests or review demo.
-     */
+    
+
     public function simulateDuplicateCallback(Request $request): JsonResponse
     {
         $providerReference = $request->input('provider_reference');
@@ -92,7 +83,7 @@ class MockInsurerController extends Controller
             'timestamp' => now()->toIso8601String(),
         ];
 
-        // Deliver identical event 3 consecutive times
+        
         $deliveryResults = [];
         for ($i = 1; $i <= 3; $i++) {
             $deliveryResults["delivery_#{$i}"] = $this->issuanceEngine->handleCallback($eventPayload);
