@@ -216,6 +216,44 @@ class PolicyRequestController extends Controller
     }
 
     /**
+     * Reconcile all stale pending or timed out policies in batch.
+     */
+    public function reconcileAllStale(): JsonResponse
+    {
+        $stalePolicies = PolicyRequest::whereIn('status', [
+            PolicyRequest::STATUS_NEEDS_RECONCILIATION,
+            PolicyRequest::STATUS_PENDING_CONFIRMATION,
+        ])
+        ->whereNotNull('provider_reference')
+        ->limit(50)
+        ->get();
+
+        $reconciledCount = 0;
+        $results = [];
+
+        foreach ($stalePolicies as $policy) {
+            $res = $this->issuanceEngine->reconcile($policy);
+            if (!empty($res['reconciled'])) {
+                $reconciledCount++;
+            }
+            $results[] = [
+                'id' => $policy->id,
+                'client_request_id' => $policy->client_request_id,
+                'status' => $policy->fresh()->status,
+                'policy_number' => $policy->fresh()->policy_number,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'scanned' => $stalePolicies->count(),
+            'reconciled' => $reconciledCount,
+            'message' => "Batch reconciliation processed {$stalePolicies->count()} requests. Successfully resolved {$reconciledCount} to ISSUED.",
+            'details' => $results,
+        ], 200);
+    }
+
+    /**
      * List requests with status filter and pagination.
      */
     public function index(Request $request): JsonResponse
