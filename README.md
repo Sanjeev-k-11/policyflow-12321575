@@ -190,3 +190,17 @@ PolicyFlow includes a responsive **Fintech Glassmorphism Dashboard**:
 1. **Simulated Insurer**: The external insurer is simulated within dedicated mock routes and datastores (`mock_insurer_policies`). No real-world third-party credentials or paid APIs are required.
 2. **Reconciliation Trigger**: In addition to manual operator reconciliation via UI and REST API (`POST /api/policy-requests/{id}/reconcile`), a scheduled background command (`php artisan schedule:run`) could be attached in high-volume production deployments.
 3. **Single Currency**: All financial figures are denominated in Indian Rupees (INR, ₹).
+
+---
+
+## 10. Final Submission Checklist
+
+- [x] **Repository link accessible to reviewers**: Clean Git repository with conventional commit history on `master`.
+- [x] **README contains working setup and test commands**: Fully documented in Section 5 (`Setup Instructions`) and Section 6 (`Running Automated Tests`).
+- [x] **Migrations and .env.example included**: 5 dedicated migrations in `database/migrations/` and pristine `.env.example` in root.
+- [x] **Core API and pricing implemented**: BCMath arbitrary-precision calculation in `app/Services/PricingService.php` and REST endpoints in `app/Http/Controllers/Api/PolicyRequestController.php`.
+- [x] **At least two failure scenarios implemented and tested**: All 4 scenarios (Cases A, B, C, and D) implemented in `IssuanceEngine.php` and verified via 25 automated tests in `tests/Feature/ReliabilityAndWorkflowTest.php`.
+- [x] **AI_USAGE.md included**: Complete disclosure in `AI_USAGE.md` detailing tools used, prompts, rejected AI suggestions, and human verification methodology.
+- [x] **No secrets or real personal data committed**: All seed data and tests use fabricated mock candidate data; no real insurer APIs or credentials.
+- [x] **Known limitations documented**: Clearly stated in Section 9 above.
+
