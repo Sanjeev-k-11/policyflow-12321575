@@ -60,7 +60,7 @@
 
     <!-- Header / Navigation Bar -->
     <header class="sticky top-0 z-40 backdrop-blur-md bg-white/70 dark:bg-slate-900/70 border-b border-white/80 dark:border-slate-800/80 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10">
             <div class="flex items-center justify-between h-16">
                 <!-- Brand logo & tag -->
                 <div class="flex items-center space-x-8">
@@ -128,7 +128,7 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10 py-8">
         {{ $slot }}
     </main>
 

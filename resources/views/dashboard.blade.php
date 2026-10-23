@@ -65,7 +65,7 @@
     }">
 
         <!-- Top Header & Fast Action Toolbar -->
-        <div class="mb-8 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+        <div class="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
                 <div class="flex items-center space-x-2">
                     <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
@@ -80,8 +80,8 @@
                 </p>
             </div>
 
-            <!-- Dashboard Action Toolbar -->
-            <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Dashboard Action Toolbar (No awkward wrapping) -->
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0">
                 <button type="button" @click="quickIntake()"
                         class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-all shadow-2xs flex items-center space-x-1.5">
                     <span>⚡ Quick Intake Sample</span>

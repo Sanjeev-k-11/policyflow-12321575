@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Policy Request {{ $policy->client_request_id }}</x-slot>
 
-    <div class="max-w-6xl mx-auto"
+    <div class="max-w-7xl mx-auto"
          x-data="{
              policyId: '{{ $policy->id }}',
              status: '{{ $policy->status }}',
