@@ -23,7 +23,7 @@
                 this.isReconciling = false;
                 $dispatch('toast', { 
                     message: res.message, 
-                    type: res.reconciled > 0 ? 'success' : 'warning' 
+                    type: res.reconciled > 0 ? 'success' : (res.scanned === 0 ? 'success' : 'warning') 
                 });
                 setTimeout(() => { window.location.reload(); }, 1200);
             })
@@ -87,14 +87,26 @@
                     <span>⚡ Quick Intake Sample</span>
                 </button>
 
-                <button type="button" @click="autoReconcileAll()" :disabled="isReconciling"
-                        class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-600 via-amber-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 shadow-md shadow-orange-500/20 transition-all flex items-center space-x-2 disabled:opacity-50">
-                    <svg x-show="isReconciling" class="animate-spin -ml-1 mr-1.5 h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                    </svg>
-                    <span x-text="isReconciling ? 'Reconciling...' : '🔄 Auto-Reconcile Stale ({{ $reconciliationCount }})'"></span>
-                </button>
+                @if ($staleCount > 0)
+                    <button type="button" @click="autoReconcileAll()" :disabled="isReconciling"
+                            class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-orange-600 via-amber-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 shadow-md shadow-orange-500/25 transition-all flex items-center space-x-2 disabled:opacity-50 animate-pulse">
+                        <svg x-show="isReconciling" class="animate-spin -ml-1 mr-1.5 h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        <span x-text="isReconciling ? 'Reconciling...' : '🔄 Auto-Reconcile Stale ({{ $staleCount }})'"></span>
+                    </button>
+                @else
+                    <button type="button" @click="autoReconcileAll()" :disabled="isReconciling"
+                            title="All requests are up to date. Click to run a health check."
+                            class="px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100/80 transition-all flex items-center space-x-1.5 disabled:opacity-50">
+                        <svg x-show="isReconciling" class="animate-spin -ml-1 mr-1.5 h-3.5 w-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        <span x-text="isReconciling ? 'Checking...' : '✓ All Reconciled (0)'"></span>
+                    </button>
+                @endif
 
                 <a href="{{ route('mock-lab') }}" 
                    class="px-3.5 py-2 rounded-xl text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 transition-all shadow-2xs flex items-center space-x-1.5">

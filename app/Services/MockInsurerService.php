@@ -129,14 +129,16 @@ class MockInsurerService
      * Reconciliation / Status query endpoint simulation.
      * Used by PolicyFlow to resolve timeouts safely before attempting any reissue.
      */
-    public function getStatus(string $providerReference): array
+    public function getStatus(string $identifier): array
     {
-        $policy = MockInsurerPolicy::where('provider_reference', $providerReference)->first();
+        $policy = MockInsurerPolicy::where('provider_reference', $identifier)
+            ->orWhere('client_request_id', $identifier)
+            ->first();
 
         if (!$policy) {
             return [
                 'found' => false,
-                'provider_reference' => $providerReference,
+                'provider_reference' => $identifier,
                 'status' => 'NOT_FOUND',
                 'message' => 'No policy record found at insurer for reference',
             ];

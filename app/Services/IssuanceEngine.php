@@ -244,15 +244,16 @@ class IssuanceEngine
      */
     public function reconcile(PolicyRequest $policy): array
     {
-        if (empty($policy->provider_reference)) {
+        $identifier = $policy->provider_reference ?: $policy->client_request_id;
+        if (empty($identifier)) {
             return [
                 'reconciled' => false,
-                'message' => 'Cannot reconcile: no provider reference present on request.',
+                'message' => 'Cannot reconcile: no provider reference or client request ID present on request.',
             ];
         }
 
         // Query upstream insurer status
-        $statusResult = $this->mockInsurer->getStatus($policy->provider_reference);
+        $statusResult = $this->mockInsurer->getStatus($identifier);
 
         if (!$statusResult['found']) {
             return [

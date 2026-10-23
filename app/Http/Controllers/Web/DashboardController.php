@@ -22,6 +22,10 @@ class DashboardController extends Controller
         ])->count();
         $failedCount = PolicyRequest::where('status', PolicyRequest::STATUS_FAILED)->count();
         $reconciliationCount = PolicyRequest::where('status', PolicyRequest::STATUS_NEEDS_RECONCILIATION)->count();
+        $staleCount = PolicyRequest::whereIn('status', [
+            PolicyRequest::STATUS_NEEDS_RECONCILIATION,
+            PolicyRequest::STATUS_PENDING_CONFIRMATION,
+        ])->whereNotNull('provider_reference')->count();
         $totalPremium = PolicyRequest::where('status', PolicyRequest::STATUS_ISSUED)->sum('calculated_premium');
 
         // Status counts breakdown for Donut chart
@@ -105,6 +109,7 @@ class DashboardController extends Controller
             'pendingCount',
             'failedCount',
             'reconciliationCount',
+            'staleCount',
             'totalPremium',
             'statusCounts',
             'planBreakdown',

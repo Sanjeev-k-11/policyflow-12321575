@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">New Policy Intake</x-slot>
 
-    <div class="max-w-7xl mx-auto"
+    <div class="w-full space-y-6"
          x-data="{
              form: {
                  client_request_id: 'AGT-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000),

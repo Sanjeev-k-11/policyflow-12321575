@@ -228,6 +228,16 @@ class PolicyRequestController extends Controller
         ->limit(50)
         ->get();
 
+        if ($stalePolicies->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'scanned' => 0,
+                'reconciled' => 0,
+                'message' => 'All policies are up to date. No stale requests found to reconcile.',
+                'details' => [],
+            ], 200);
+        }
+
         $reconciledCount = 0;
         $results = [];
 
@@ -244,11 +254,15 @@ class PolicyRequestController extends Controller
             ];
         }
 
+        $message = $reconciledCount > 0
+            ? "Batch reconciliation complete: Successfully resolved {$reconciledCount} of {$stalePolicies->count()} stale request(s) to ISSUED."
+            : "Scanned {$stalePolicies->count()} request(s). Pending requests are awaiting provider confirmation or webhook callback.";
+
         return response()->json([
             'success' => true,
             'scanned' => $stalePolicies->count(),
             'reconciled' => $reconciledCount,
-            'message' => "Batch reconciliation processed {$stalePolicies->count()} requests. Successfully resolved {$reconciledCount} to ISSUED.",
+            'message' => $message,
             'details' => $results,
         ], 200);
     }

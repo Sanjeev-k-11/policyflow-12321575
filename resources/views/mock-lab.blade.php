@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Mock Insurer Laboratory</x-slot>
 
-    <div class="max-w-7xl mx-auto"
+    <div class="w-full space-y-6"
          x-data="{
              selectedScenario: 'SUCCESS',
              selectedPolicyId: '{{ $recentPolicies->first()?->id }}',

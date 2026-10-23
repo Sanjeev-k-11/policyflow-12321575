@@ -414,6 +414,19 @@ class DatabaseSeeder extends Seeder
                         'customer_name' => $item['customer_name'],
                     ]
                 );
+            } elseif ($item['status'] === PolicyRequest::STATUS_PENDING_CONFIRMATION) {
+                // Upstream insurer completed underwriting; ready for reconciliation
+                MockInsurerPolicy::firstOrCreate(
+                    ['provider_reference' => $providerRef],
+                    [
+                        'client_request_id' => $item['client_request_id'],
+                        'agent_id' => $item['agent_id'],
+                        'policy_number' => 'POL-ASYNC-' . strtoupper(Str::random(6)),
+                        'status' => 'ISSUED',
+                        'premium' => $calc['calculated_premium'],
+                        'customer_name' => $item['customer_name'],
+                    ]
+                );
             }
 
             // Record initial state history: INTAKE -> RECEIVED
